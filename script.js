@@ -263,7 +263,7 @@ function loadData() {
   
 
   jsonArray = jsonArray.trim();
-    const array = [];
+    let array = [];
   if (jsonArray) {
     array = JSON.parse(jsonArray);
   }
