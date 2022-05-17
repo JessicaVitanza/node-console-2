@@ -1,7 +1,8 @@
 const prompt = require('prompt');
 const model = require('./model.js')
+const fs = require('fs');
 
-const publicationArray = [];
+const publicationArray = loadData();
 
 console.log('benvenuto in book manager!')
 
@@ -23,8 +24,7 @@ function startMenu() {
       }
     }
   };
-
-  prompt.get(schema, startMenuManager);
+     prompt.get(schema, startMenuManager);
 }
 
 
@@ -51,15 +51,14 @@ function  printMenu() {
   console.log('3) lista in ordine di prezzo');
   console.log('4) torna al menù principale')
 
-  const schema = {
+ const schema = {
     properties: {
-      selection: {
-        description: 'Seleziona una delle opzioni',
-      }
-    }
+     selection: {
+   description: 'Seleziona una delle opzioni',
+  }
+  }
   };
-
-  prompt.get(schema, printMenuManager);
+    prompt.get(schema, printMenuManager);
 }
 
 
@@ -105,7 +104,7 @@ function comparePublicationByPrice(pub1, pub2) {
 
 
 function printArray(arrayToPrint){
-for (const pub of arrayToPrint) {
+  for (const pub of arrayToPrint) {
   console.log(pub.toString());
   console.log('------------------------------');
 }  
@@ -118,13 +117,13 @@ function insertMenu() {
   console.log('3) torna al menù principale')
 
   const schema = {
-    properties: {
+     properties: {
       selection: {
-        description: 'Seleziona una delle opzioni',
-      }
-    }
+    description: 'Seleziona una delle opzioni',
+  }
+  }
   };
-       prompt.get(schema, insertMenuManager);
+    prompt.get(schema, insertMenuManager);
 }
 
 
@@ -187,7 +186,7 @@ function insertBookManger(err, result){
 
   publicationArray.push(book);
 
-  console.log(publicationArray);
+  saveData(publicationArray);
 
   startMenu();
 }
@@ -236,7 +235,45 @@ function insertMagazineManger(err, result){
 
   publicationArray.push(magazine);
 
-  console.log(publicationArray);
+  saveData(publicationArray);
 
   startMenu();
+}
+
+
+function saveData(arrayToSave) {
+  const jsonArray = JSON.stringify(arrayToSave);
+  
+  try {
+    fs.writeFileSync('./data-file.json', jsonArray);
+  } catch (error) {
+    console.log('impossibile salvare il file');
+  } 
+}
+
+
+function loadData() {
+  let jsonArray 
+
+  try {
+    jsonArray = fs.readFileSync('./data-file.json', 'utf8');
+  } catch (error) {
+    jsonArray = '[]'
+  }
+  
+
+  jsonArray = jsonArray.trim();
+    const array = [];
+  if (jsonArray) {
+    array = JSON.parse(jsonArray);
+  }
+  
+
+  const pubArray = [];
+  for (const obj of array) {
+    const publication = model.pubblicationFactory(obj);
+    pubArray.push(publication);
+  }
+
+  return pubArray;
 }
