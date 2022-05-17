@@ -225,8 +225,7 @@ function insertMagazine() {
       },
     }
   };
-
-  prompt.get(schema, insertMagazineManger); 
+       prompt.get(schema, insertMagazineManger); 
 }
 
 
